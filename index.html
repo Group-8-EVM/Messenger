@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Messaging</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 10px;
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #dbdbdb;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-section {
+            padding: 20px;
+            border-bottom: 1px solid #dbdbdb;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .wallet-connect {
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* New Chat Section */
+        .new-chat-section {
+            padding: 15px;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        .new-chat-button {
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .new-chat-form {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .new-chat-form.active {
+            display: block;
+        }
+
+        .address-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .conversations {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .conversation {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .conversation:hover {
+            background-color: #fafafa;
+        }
+
+        .conversation img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        /* Main Chat Area Styles */
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 16px;
+            border-bottom: 1px solid #dbdbdb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 60%;
+            padding: 12px;
+            border-radius: 20px;
+            margin: 4px 0;
+        }
+
+        .received {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+        }
+
+        .sent {
+            background-color: #0095f6;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #dbdbdb;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .send-button {
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .send-button:hover {
+            background-color: #0081d6;
+        }
+
+        /* Mobile Profile Icon */
+        .mobile-profile {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 50vh;
+            }
+
+            .profile-section {
+                display: none;
+            }
+
+            .mobile-profile {
+                display: block;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 100;
+            }
+
+            .mobile-profile img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 2px solid #0095f6;
+                cursor: pointer;
+            }
+
+            .chat-area {
+                height: 50vh;
+                padding-top: 60px; /* Make space for mobile profile */
+            }
+
+            .messages {
+                max-height: calc(50vh - 140px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .conversation {
+                padding: 8px 12px;
+            }
+
+            .message {
+                max-width: 80%;
+            }
+
+            .input-area {
+                padding: 10px;
+            }
+
+            .message-input {
+                padding: 8px;
+            }
+
+            .send-button {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Profile -->
+        <div class="mobile-profile">
+            <img src="Images/Profile_pic.png" alt="Profile" onclick="toggleProfileDropdown()">
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="profile-dropdown" id="profileDropdown">
+            <h3>User Name</h3>
+            <p class="wallet-address">0x1234...5678</p>
+            <button class="wallet-connect">Connect Wallet</button>
+        </div>
+
+        <div class="sidebar">
+            <div class="profile-section">
+                <img src="Images/Profile_pic.png" alt="Profile" class="profile-img">
+                <h3>User Name</h3>
+                <p class="wallet-address">0x1234...5678</p>
+                <button class="wallet-connect">Connect Wallet</button>
+            </div>
+
+            <div class="new-chat-section">
+                <button class="new-chat-button" onclick="toggleNewChatForm()">New Chat</button>
+                <div class="new-chat-form" id="newChatForm">
+                    <input type="text" class="address-input" placeholder="Enter wallet address...">
+                    <button class="wallet-connect" onclick="addNewChat()">Start Chat</button>
+                </div>
+            </div>
+
+            <div class="conversations">
+                <div class="conversation">
+                    <img src="Images/img2.png" alt="Contact 1">
+                    <div>
+                        <h4>Contact Name</h4>
+                        <p>Last message...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <img src="Images/img2.png" alt="Current Chat">
+                    <h3>Current Chat Name</h3>
+                </div>
+            </div>
+            
+            <div class="messages">
+                <div class="message received">
+                    Hey! How are you?
+                </div>
+                <div class="message sent">
+                    I'm doing great! Just exploring Web3 messaging.
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" class="message-input" placeholder="Type a message...">
+                <button class="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleNewChatForm() {
+            const form = document.getElementById('newChatForm');
+            form.classList.toggle('active');
+        }
+
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        function addNewChat() {
+            const addressInput = document.querySelector('.address-input');
+            const address = addressInput.value;
+            
+            if (address) {
+                const conversationsDiv = document.querySelector('.conversations');
+                const newConversation = document.createElement('div');
+                newConversation.className = 'conversation';
+                newConversation.innerHTML = `
+                    <img src="Images/Profile_pic.png" alt="New Contact">
+                    <div>
+                        <h4>${address.substring(0, 6)}...${address.substring(address.length - 4)}</h4>
+                        <p>New conversation</p>
+                    </div>
+                `;
+                
+                conversationsDiv.prepend(newConversation);
+                addressInput.value = '';
+                toggleNewChatForm();
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            const profileImg = document.querySelector('.mobile-profile img');
+            
+            if (!dropdown.contains(event.target) && event.target !== profileImg) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
