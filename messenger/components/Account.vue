@@ -8,7 +8,7 @@ const { address, chainId, status } = useAccount()
 const { disconnect } = useDisconnect()
 const { writeContract } = useWriteContract();
 
-const {data: messages} = useReadContract({
+const {data: messages, refetch} = useReadContract({
   abi,
   address: contractAddress,
   functionName: 'getMyMessages',
@@ -44,6 +44,7 @@ const sendMessage = (): void => {
     <input v-model="destAddress"/>
     <button @click="sendMessage()">send</button>
     {{messages}}
+    <button @click="refetch()">refetch</button>
   </div>
 
   <button v-if="status !== 'disconnected'" type="button" @click="disconnect()">
