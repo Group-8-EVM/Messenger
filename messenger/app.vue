@@ -1,28 +1,13 @@
+<script setup lang="ts">
+import {useAccount} from "@wagmi/vue";
+import Connected from "~/components/Connected.vue";
+const { status } = useAccount();
+</script>
 <template>
-  <Account />
-  <Connect />
+  <div class="h-screen w-screen bg-blue-200 flex flex-row justify-center p-10">
+    <div class="bg-blue-300 h-full w-[60vh] rounded-3xl p-10">
+      <Connected v-if="status === 'connected'"></Connected>
+      <Connect v-else></Connect>
+    </div>
+  </div>
 </template>
-
-<style>
-:root {
-  background-color: #181818;
-  color: rgba(255, 255, 255, 0.87);
-  color-scheme: light dark;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-synthesis: none;
-  font-weight: 400;
-  line-height: 1.5;
-  text-rendering: optimizeLegibility;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    background-color: #f8f8f8;
-    color: #181818;
-  }
-}
-</style>

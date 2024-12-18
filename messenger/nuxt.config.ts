@@ -4,5 +4,6 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
-  modules: ['@wagmi/vue/nuxt'],
+  modules: ['@wagmi/vue/nuxt', '@nuxtjs/tailwindcss'],
+  compatibilityDate: '2024-12-18',
 })
