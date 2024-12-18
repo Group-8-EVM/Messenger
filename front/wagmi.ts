@@ -1,6 +1,6 @@
-import { http, cookieStorage, createConfig, createStorage } from '@wagmi/vue'
-import { mainnet, optimism, sepolia } from '@wagmi/vue/chains'
-import { injected, metaMask, walletConnect } from '@wagmi/vue/connectors'
+import { http, cookieStorage, createConfig, createStorage } from "@wagmi/vue";
+import { mainnet, optimism, sepolia } from "@wagmi/vue/chains";
+import { injected, metaMask, walletConnect } from "@wagmi/vue/connectors";
 
 export const config = createConfig({
   chains: [mainnet, sepolia, optimism],
@@ -20,10 +20,10 @@ export const config = createConfig({
     [sepolia.id]: http(),
     [optimism.id]: http(),
   },
-})
+});
 
-declare module '@wagmi/vue' {
+declare module "@wagmi/vue" {
   interface Register {
-    config: typeof config
+    config: typeof config;
   }
 }

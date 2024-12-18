@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useAccount} from "@wagmi/vue";
+import { useAccount } from "@wagmi/vue";
 import Connected from "~/components/Connected.vue";
 const { status } = useAccount();
 </script>
