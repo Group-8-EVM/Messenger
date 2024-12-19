@@ -27,6 +27,7 @@ describe("Messenger", async () => {
           .length,
       ).eq(0);
     });
+
     it("should add message into person messages", async () => {
       const { publicClient, messenger, account1, account2, account3 } =
         await loadFixture(deployMessengerFixture);
@@ -40,6 +41,27 @@ describe("Messenger", async () => {
       const message = account2Messages[0];
       expect(message.message).to.equal("Hi");
     });
+
+    it("should not allow sending an empty message", async () => {
+      const { publicClient, messenger, account1, account2 } =
+        await loadFixture(deployMessengerFixture);
+      await expect(
+        messenger.write.sendMessage([account2.account.address, ""], {
+          account: account1.account,
+        }),
+      ).to.be.revertedWith("Message cannot be empty");
+    });
+
+    it("should not allow sending a message to an invalid address", async () => {
+      const { publicClient, messenger, account1 } =
+        await loadFixture(deployMessengerFixture);
+      await expect(
+        messenger.write.sendMessage(["0x0000000000000000000000000000000000000000", "Hi"], {
+          account: account1.account,
+        }),
+      ).to.be.revertedWith("Invalid recipient address");
+    });
+
     it("should see message for yourself", async () => {
       const { publicClient, messenger, account1, account2, account3 } =
         await loadFixture(deployMessengerFixture);
@@ -53,6 +75,7 @@ describe("Messenger", async () => {
       const message = account1Messages[0];
       expect(message.message).to.equal("Hi");
     });
+    
     it("should not everyone get message", async () => {
       const { publicClient, messenger, account1, account2, account3 } =
         await loadFixture(deployMessengerFixture);
